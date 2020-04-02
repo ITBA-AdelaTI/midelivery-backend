@@ -1,0 +1,48 @@
+{
+  "shops": [
+    {
+      "id": 1,
+      "name": "La Farola de Urquiza",
+      "location": "Av. Monroe 5002, C1431 CAP, Buenos Aires",
+      "products": [
+        {
+          "sku": 66,
+          "name": "Bebida",
+          "amount": 80.00
+        },
+        {
+          "sku": 12,
+          "name": "Milanesa de Pollo Napolitana",
+          "amount": 180.00
+        },
+        {
+          "sku": 94,
+          "name": "Pizzanesa",
+          "amount": 260.00
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "El Imperio de la Pizza",
+      "location": "1427, Av. Corrientes 6891, C1427 BPG, Buenos Aires",
+      "products": [
+        {
+          "sku": 34,
+          "name": "Pizza Fugazzeta",
+          "amount": 230.00
+        },
+        {
+          "sku": 87,
+          "name": "Pizza Fugazzeta",
+          "amount": 300.00
+        },
+        {
+          "sku": 71,
+          "name": "Cerveza Botella",
+          "amount": 170.00
+        }
+      ]
+    }
+  ]
+}
