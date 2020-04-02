@@ -33,6 +33,29 @@ def create_order(order):
     return data
 
 
+def update_order(order_id, new_order):
+
+    old_order = find_order(order_id)
+
+    if not old_order:
+        return None
+
+    order_to_update = {
+        "id": old_order['id'],
+        "shop": new_order['shop'],
+        "product": new_order['product'],
+        "q": new_order['q'],
+        "amount": new_order['amount'],
+        "totalAmount": new_order['amount'] * new_order['q'],
+    }
+
+    old_index = data['orders'].index(old_order)
+
+    data['orders'][old_index] = order_to_update
+
+    return order_to_update
+
+
 def delete_order(order_id):
 
     order = find_order(order_id)

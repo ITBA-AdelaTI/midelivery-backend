@@ -6,6 +6,7 @@ from order_repository import *
 app = Flask(__name__)
 CORS(app)
 
+
 # Shops
 
 
@@ -52,6 +53,7 @@ def get_shop_product(shop_id, product_id):
 
     return product, 200
 
+
 # Orders
 
 
@@ -83,6 +85,17 @@ def add_order():
     created = create_order(request.json)
 
     return created, 201
+
+
+@app.route('/orders/<order_id>', methods=['PUT'])
+def edit_order(order_id):
+
+    edited_order = update_order(order_id, request.json)
+
+    if not edited_order:
+        return {"error": "Order not found to be edited"}, 404
+
+    return edited_order, 200
 
 
 @app.route('/orders/<order_id>', methods=['DELETE'])
