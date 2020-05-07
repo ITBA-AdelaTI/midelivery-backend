@@ -1,25 +1,28 @@
-from flask import json
 from random import random
+from utils import get_db
+from bson.json_util import dumps
 
-with open('orders.json', 'r+') as shops_file:
-    data = json.load(shops_file)
+collection = get_db().orders
 
 
 def find_orders():
-    return data
+    orders = collection.find({}, {'_id': 0})
+    return dumps(orders)
 
 
 def find_order(order_id):
 
-    for order in data['orders']:
-        if str(order['id']) == str(order_id):
-            return order
+    order = collection.find_one({'id': int(order_id)}, {'_id': 0})
 
-    return None
+    print(order)
+
+    if not order:
+        return None
+
+    return dumps(order)
 
 
 def create_order(order):
-
     order_to_create = {
         "id": round(random() * 100000),
         "shop": order['shop'],
@@ -29,41 +32,29 @@ def create_order(order):
         "totalAmount": order['q'] * order['amount']
     }
 
-    data['orders'].append(order_to_create)
-    return data
+    inserted_id = collection.insert_one(order_to_create).inserted_id
+    return dumps(inserted_id)
 
 
 def update_order(order_id, new_order):
 
-    old_order = find_order(order_id)
+    result = collection.update_one({'id': int(order_id)},
+                                   {'$set': {
+                                       'shop': new_order['shop'],
+                                       "product": new_order['product'],
+                                       "q": new_order['q'],
+                                       "amount": new_order['amount'],
+                                       "totalAmount": new_order['amount'] * new_order['q']
+                                   }
+                                   })
 
-    if not old_order:
-        return None
-
-    order_to_update = {
-        "id": old_order['id'],
-        "shop": new_order['shop'],
-        "product": new_order['product'],
-        "q": new_order['q'],
-        "amount": new_order['amount'],
-        "totalAmount": new_order['amount'] * new_order['q'],
-    }
-
-    old_index = data['orders'].index(old_order)
-
-    data['orders'][old_index] = order_to_update
-
-    return order_to_update
+    return find_order(order_id) if result.modified_count == 1 else None
 
 
 def delete_order(order_id):
 
-    order = find_order(order_id)
+    order_to_delete = find_order(order_id)
 
-    if not order:
-        return None
+    result = collection.delete_one({'id': int(order_id)})
 
-    data['orders'].remove(order)
-
-    return order
-
+    return order_to_delete if result.deleted_count == 1 else None
