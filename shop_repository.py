@@ -1,41 +1,40 @@
-from flask import json
+from utils import get_db
+from bson.json_util import dumps
 
-with open('shops.json', 'r') as shops_file:
-    data = json.load(shops_file)
+
+collection = get_db().shops
 
 
 def find_shops():
-    return data
+    shops = collection.find({}, {'_id': 0})
+    return dumps(shops)
 
 
 def find_shop(shop_id):
 
-    for shop in data['shops']:
-        if str(shop['id']) == str(shop_id):
-            return shop
+    shop = collection.find_one({'id': int(shop_id)}, {'_id': 0})
 
-    return None
+    print(shop)
+
+    if not shop:
+        return None
+
+    return dumps(shop)
 
 
 def find_products(shop_id):
 
-    for shop in data['shops']:
-        if str(shop['id']) == str(shop_id):
-            return shop['products']
+    shop = collection.find_one({'id': int(shop_id)})
 
-    return []
+    return dumps(shop['products']) if shop else []
 
 
 def find_product(shop_id, product_id):
 
-    products = find_products(shop_id)
+    product = collection.find({'id': int(shop_id)},
+                              {'products': {'$elemMatch': {'sku': int(product_id)}}, "_id": 0})
 
-    if not products:
-        return None
+    print(product)
 
-    for prod in products:
-        if str(prod['sku']) == str(product_id):
-            return prod
-
-    return None
+    return dumps(product)
 
